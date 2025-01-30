@@ -573,7 +573,7 @@ class CodeGenerator:
         # Return result
         self.add_instruction(f"LOAD {product}")
 
-    def divide(dividend, divisor):
+    def divide(self, dividend, divisor):
         if divisor == 0 or dividend == 0:
             return 0
         sign = 0
@@ -716,7 +716,7 @@ class CodeGenerator:
 
         self.add_instruction(f"LOAD {result_temp}")
 
-    def modulo(dividend, divisor):
+    def modulo(self, dividend, divisor):
         if divisor == 0:
             return 0
         remainder = dividend
