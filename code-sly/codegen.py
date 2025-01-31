@@ -957,6 +957,10 @@ class CodeGenerator:
             for declaration, declaration_address in procedure_it.declarations:
                 if node.name == declaration:
                     return declaration_address
+            for foriterator, foriterator_address in procedure_it.foriterators:
+                if node.name == foriterator:
+                    print(f"Untested")
+                    return foriterator_address
 
     def get_code(self):
         self.resolve_placeholders()
