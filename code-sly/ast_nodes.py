@@ -1,4 +1,7 @@
 class AstNode:
+    def __init__(self):
+        self.lineno = 0
+
     def print(self, indent=0):
         raise NotImplementedError
 
@@ -20,12 +23,14 @@ class ValueNode(ExpressionNode):
 
 
 class IdentifierNode(ExpressionNode):
-    def __init__(self, name, index=None, start=0, end=0, is_array_range=False):
+    def __init__(self, name, index=None, start=0, end=0, is_array_range=False, lineno=0):
+        super().__init__()
         self.name = name
         self.index = index
         self.start = start
         self.end = end
         self.is_array_range = is_array_range
+        self.lineno = lineno
 
     def print(self, indent=0):
         self._print_indent(indent)
@@ -114,9 +119,10 @@ class CommandsNode(AstNode):
 
 
 class AssignNode(CommandNode):
-    def __init__(self, identifier, expression):
+    def __init__(self, identifier, expression, lineno=0):
         self.identifier = identifier
         self.expression = expression
+        self.lineno = lineno
 
     def print(self, indent=0):
         self._print_indent(indent)

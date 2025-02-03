@@ -2,7 +2,7 @@ from sly import Lexer
 
 class MyLexer(Lexer):
     tokens = { PROGRAM, PROCEDURE, IS, BEGIN, END, ASSIGN, IF, THEN, T, ELSE, ENDIF, WHILE, DO, ENDWHILE, REPEAT, UNTIL, FOR, FROM, TO, DOWNTO, ENDFOR, WRITE, READ, NEQ, GEQ, LEQ, PIDENTIFIER, NUM }
-    ignore = ' \t\r\n'
+    ignore = ' \t'
     literals = { '+', '-', '*', '/', '%', '=', '>', '<', '[', ']', '(', ')', ':', ',', ';' }
 
     # Token regex patterns
@@ -35,13 +35,21 @@ class MyLexer(Lexer):
     TO = r'TO'
     T = r'T'
 
+
+    def ignore_newline(self, t):
+        self.lineno += t.value.count('\n')
+
+    def error(self, t):
+        print('Line %d: Bad character %r' % (self.lineno, t.value[0]))
+        self.index += 1
+
+    @_(r'\n+')
+    def ignore_newline(self, t):
+        self.lineno += len(t.value)
+
     @_(r'\#.*')
     def comment(self, t):
         pass
-
-    def error(self, t):
-        print(f"Illegal character '{t.value[0]}' at line {t.lineno}")
-        self.index += 1
 
     @_(r'[_a-z]+')
     def PIDENTIFIER(self, t):
@@ -63,8 +71,8 @@ def main():
         data = file.read()
 
     lexer = MyLexer()
-    for tok in lexer.tokenize(data):
-        print(tok)
+    for token in lexer.tokenize(data):
+        print(token)
 
 if __name__ == '__main__':
     main()

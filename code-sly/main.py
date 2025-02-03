@@ -18,25 +18,30 @@ def main():
         print(f"Failed to open file: {input_file}")
         return
 
-    print("Parsing input...")
+    # print("Parsing input...")
     lexer = MyLexer()
     parser = MyParser()
     try:
         tokens = list(lexer.tokenize(data))
-        print("Tokens:")
-        for token in tokens:
-            print(token)
+        # print("Tokens:")
+        # for token in tokens:
+        #     print(token)
         root = parser.parse(iter(tokens))  # Convert list to iterator
-        print("Parsing completed successfully.")
+        # print("Parsing completed successfully.")
         if root:
-            print("Generated AST:")
-            root.print()
-            codegen = CodeGenerator()
-            codegen.generate(root)
+            # print("Generated AST:")
+            # root.print()
+            try:
+                codegen = CodeGenerator()
+                codegen.generate(root)
+            except Exception as e:
+                error_line = getattr(parser, 'error_line', 0) or 'unknown'
+                print(f"Code generation error: {e}")
+                return
             machine_code = codegen.get_code()
             with open(output_file, 'w') as file:
                 file.write(machine_code)
-            print(f"Machine code written to {output_file}")
+            # print(f"Machine code written to {output_file}")
         else:
             print("No AST generated.")
     except Exception as e:
