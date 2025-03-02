@@ -1,35 +1,32 @@
 import subprocess
 import re
+import pytest
 
 def strip_ansi_codes(text):
     return re.sub(r'\x1b\[[0-9;]*m', '', text)
 
-compiler = "compiler.py"
-virtual_machine = "../maszyna_wirtualna/maszyna-wirtualna"
-input_file = "../tests/basic_tests/example1.imp"
-output_file = "../out/example1.mr"
+@pytest.mark.parametrize("basic", [
+    {
+        "input_file": "../tests/basic_tests/example1.imp",
+        "inputs": [12, 32],
+        "expected_outputs": [3, 1, 4]
+    },
+    {
+        "input_file": "../tests/basic_tests/example2.imp",
+        "inputs": [0, 1],
+        "expected_outputs": [46368, 28657]
+    },
+])
 
-inputs = [12, 32]
-expected_outputs = [3, 1, 4]
+def test_compiler(basic, capsys):
+    compiler = "compiler.py"
+    virtual_machine = "../maszyna_wirtualna/maszyna-wirtualna"
+    output_file = "../out/" + basic["input_file"].split("/")[-1].replace(".imp", ".mr")
 
-input_values = "\n".join(map(str, inputs)) + "\n"
+    subprocess.run(["python", compiler, basic["input_file"], output_file], check=True)
 
-try:
-    compile_command = ["python", compiler, input_file, output_file]
-    subprocess.run(compile_command, check=True)
-    # print(f"Compilation successful: {input_file} -> {output_file}")
-except subprocess.CalledProcessError as e:
-    print(f"Error during compilation: {e}")
-    exit(1)
-
-try:
-    run_command = [virtual_machine, output_file]
-    process = subprocess.run(
-        run_command,
-        input=input_values,
-        text=True,
-        capture_output=True
-    )
+    input_values = "\n".join(map(str, basic["inputs"])) + "\n"
+    process = subprocess.run([virtual_machine, output_file], input=input_values, text=True, capture_output=True)
 
     output_lines = process.stdout.splitlines()
 
@@ -38,31 +35,17 @@ try:
         for line in output_lines
         if (match := re.search(r">\s*(\d+)", line))  # Use match assignment
     ]
+    assert actual_outputs == basic["expected_outputs"]
 
     complexity = re.search(r"koszt:\s*([\d,]+)", strip_ansi_codes(output_lines[-1])).group(1)
     io = re.search(r"i/o:\s*([\d,]+)", strip_ansi_codes(output_lines[-1])).group(1)
 
-    print(f"Input:    {inputs}")
-    print(f"Expected: {expected_outputs}")
-    print(f"Actual:   {actual_outputs}")
-
-    if complexity:
-        print("Complexity cost: " + complexity)
-    else:
-        print("Complexity not found")
-
-    if io:
-        print("Including i/o:   " + io)
-    else:
-        print("I/O complexity not found")
-
-    if actual_outputs == expected_outputs:
-        print("Validation PASSED")
-    else:
-        print("Validation FAILED")
-
-except subprocess.CalledProcessError as e:
-    print(f"Error during execution: {e}")
-    exit(1)
-
+    with capsys.disabled():
+        print(f"\n{basic["input_file"].split("/")[-1]}")
+        print(f"Input:  {basic["inputs"]}")
+        print(f"Output: {actual_outputs}")
+        if complexity and io:
+            print("Complexity cost: " + complexity + "; including i/o: " + io)
+        else:
+            print("Complexity not found")
 
