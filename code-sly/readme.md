@@ -1,7 +1,8 @@
-# SLY installation in venv
+# Linraries installation in venv
 python3 -m venv venv
 source venv/bin/activate
 pip install sly
+pip install -U pytest
 python compiler.py <input_file> <output_file>
 
 

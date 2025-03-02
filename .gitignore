@@ -1,6 +1,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-myenv/
+venv/
 maszyna-wirtualna/maszyna-wirtualna
 *.o
