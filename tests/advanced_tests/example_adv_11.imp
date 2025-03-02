@@ -1,0 +1,14 @@
+PROGRAM IS
+   i, n, p[1:10]
+BEGIN
+    i := 2;
+    n := 10;
+    p[i] := i;
+    p[n] := n;
+
+    FOR i FROM p[i] TO p[n] DO
+        WRITE i;
+    ENDFOR
+
+    WRITE i;
+END

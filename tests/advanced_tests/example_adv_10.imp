@@ -1,0 +1,44 @@
+# Kombinacje 2
+# ? 20
+# ? 9
+# > 167960
+
+PROCEDURE factorial(T s,n) IS
+  sigma[2:4], p, wiu
+BEGIN
+  s[0]:=100000;
+  p:=s[0];
+  FOR i FROM 1 TO n DO
+    s[i]:=p/i;
+    p := s[i];
+  ENDFOR
+END
+
+PROCEDURE bc(ni,k,m) IS
+  si[0:100],p
+BEGIN
+  factorial(si,ni);
+  p:=ni-k;
+  m:=si[ni]/si[k];
+  m:=m/si[p];
+END
+
+PROGRAM IS
+    n,k,w, pipi[0:10]
+BEGIN
+    READ n;
+    READ k;
+    factorial(pipi,n);
+    WRITE 1231231234123123;
+    FOR i FROM 0 TO 10 DO
+    WRITE pipi[i];
+    ENDFOR
+    WRITE 1231231234123123;
+    WRITE pipi[0];
+    WRITE pipi[1];
+    WRITE pipi[2];
+    WRITE pipi[3];
+    WRITE pipi[4];
+    WRITE pipi[5];
+    WRITE pipi[6];
+END

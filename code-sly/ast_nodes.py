@@ -194,7 +194,6 @@ class ForToNode(CommandNode):
         self.from_value = from_value
         self.to_value = to_value
         self.commands = commands
-        # print(commands.size())
 
     def print(self, indent=0):
         self._print_indent(indent)

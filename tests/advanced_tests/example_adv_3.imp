@@ -1,0 +1,28 @@
+PROCEDURE licz(T s, n) IS
+  j
+BEGIN
+  j := 5;
+  FOR i FROM 2 TO n DO
+    s[i]:=1000;
+    WRITE s[i];
+  ENDFOR
+  s[j] := 1001;
+
+END
+PROCEDURE wypisz(T fs, n) IS
+BEGIN
+  FOR i FROM n DOWNTO 2 DO
+    IF fs[i]>0 THEN
+      WRITE i;
+    ENDIF
+  ENDFOR
+END
+PROGRAM IS
+  n, sito[2:20]
+BEGIN
+  n:=20;
+  licz(sito,n);
+      FOR i FROM 2 TO 20 DO
+        WRITE sito[i];
+    ENDFOR
+END

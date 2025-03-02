@@ -1,0 +1,27 @@
+PROCEDURE licz(T s, k) IS
+  n
+BEGIN
+	n := 5;
+	s[2] := 102;
+	s[3] := 103;
+	s[4] := 104;
+	s[n] := 105;
+	s[k] := 106;
+	s[7] := 107;
+	s[8] := 108;
+	s[9] := 109;
+	s[10] := 110;
+END
+PROGRAM IS
+  n, sito[2:20]
+BEGIN
+  n:=6;
+  WRITE sito[n];
+  licz(sito,n);
+	FOR i FROM 2 TO 20 DO
+		WRITE sito[i];
+	ENDFOR
+	WRITE sito[4];
+	WRITE sito[5];
+	WRITE sito[6];
+END

@@ -9,9 +9,6 @@ ONE_CONSTANT_ADDR = COMPILER_RESERVED
 
 class CodeGenerator:
     def __init__(self):
-        # self.array_variables = set()
-        # self.scalar_variables = set()
-        
         self.instructions = []
         self.memory_counter = COMPILER_RESERVED + 1
         self.labels = {}
@@ -27,15 +24,14 @@ class CodeGenerator:
 
     class Procedure:
         def __init__(self):
-            # self.array_params = set()
-            # self.scalar_params = set()
             self.name = None
             self.address = None
             self.jump_address = None
             self.foriterators = {}
-            self.arguments = {}
             self.declarations = {}
             self.declarations_array_info = {}
+            self.declaration_is_declared = set()
+            self.arguments = {}
             self.argument_is_array = set()
 
     def new_label(self):
@@ -159,7 +155,7 @@ class CodeGenerator:
                         self.add_instruction(f"LOAD {procedure_it.foriterators[node.identifier.index.name]}")
                     else:
                         # pass
-                        raise Exception(f"\"{node.identifier.index.name}\" Undeclared - (Unexpected, maybe ERROR because of unemplimented for_iterators)2")
+                        raise Exception(f"\"{node.identifier.index.name}\" Undeclared")
                     self.add_instruction(f"STORE 2") #index
                     # self.add_instruction(f"LOAD {procedure_it.declarations[node.identifier.name]}") #SET??
                     self.add_instruction(f"SET {offset}") #SET??
@@ -172,6 +168,7 @@ class CodeGenerator:
                 else:
                     if node.identifier.index:
                         raise Exception(f"Variable '{node.identifier.name}' is not an array")
+                    procedure_it.declaration_is_declared.add(node.identifier.name)
                     self.add_instruction(f"STORE {procedure_it.declarations[node.identifier.name]}")
             else:
                 raise Exception(f"\"{node.identifier.name}\" Undeclared")
@@ -223,12 +220,12 @@ class CodeGenerator:
             self.variables[node.pidentifier.name] = iterator_location #delete later
             self.foriterators[node.pidentifier.name] = iterator_location
             self.memory_counter += 1
-            print(f"Iterator '{node.pidentifier.name}' allocated at memory location {self.variables[node.pidentifier.name]}")
+            # print(f"Iterator '{node.pidentifier.name}' allocated at memory location {self.variables[node.pidentifier.name]}")
         else:
             procedure_it = next((p for p in self.procedures if p.name == self.location[-1]), None)
             procedure_it.foriterators[node.pidentifier.name] = iterator_location
             self.memory_counter += 1
-            print(f"Iterator '{node.pidentifier.name}' allocated at memory location {procedure_it.foriterators[node.pidentifier.name]}")
+            # print(f"Iterator '{node.pidentifier.name}' allocated at memory location {procedure_it.foriterators[node.pidentifier.name]}")
 
 
         to_value_location = self.memory_counter
@@ -250,14 +247,11 @@ class CodeGenerator:
         self.add_placeholder(end_label)
 
         if self.location[-1] == "main":
-            # print(f"Variable '{node.pidentifier.name}' deallocated from memory location {self.variables[node.pidentifier.name]}")
             del self.foriterators[node.pidentifier.name]
             del self.variables[node.pidentifier.name] #delete later
         else:
             procedure_it = next((p for p in self.procedures if p.name == self.location[-1]), None)
-            # print(f"Iterator '{node.pidentifier.name}' deallocated from memory location {procedure_it.foriterators[node.pidentifier.name]}")
             del procedure_it.foriterators[node.pidentifier.name]
-        # self.memory_counter -= 2
 
     def gen_ForDownToNode(self, node):
         start_label = self.new_label()
@@ -269,12 +263,12 @@ class CodeGenerator:
             self.variables[node.pidentifier.name] = iterator_location #delete later
             self.foriterators[node.pidentifier.name] = iterator_location
             self.memory_counter += 1
-            print(f"Iterator '{node.pidentifier.name}' allocated at memory location {self.variables[node.pidentifier.name]}")
+            # print(f"Iterator '{node.pidentifier.name}' allocated at memory location {self.variables[node.pidentifier.name]}")
         else:
             procedure_it = next((p for p in self.procedures if p.name == self.location[-1]), None)
             procedure_it.foriterators[node.pidentifier.name] = iterator_location
             self.memory_counter += 1
-            print(f"Iterator '{node.pidentifier.name}' allocated at memory location {procedure_it.foriterators[node.pidentifier.name]}")
+            # print(f"Iterator '{node.pidentifier.name}' allocated at memory location {procedure_it.foriterators[node.pidentifier.name]}")
         to_value_location = self.memory_counter
         self.memory_counter += 1
         self.generate(node.to_value)
@@ -294,19 +288,15 @@ class CodeGenerator:
         self.add_placeholder(end_label)
 
         if self.location[-1] == "main":
-            # print(f"Variable '{node.pidentifier.name}' deallocated from memory location {self.variables[node.pidentifier.name]}")
             del self.foriterators[node.pidentifier.name]
             del self.variables[node.pidentifier.name] #delete later
         else:
             procedure_it = next((p for p in self.procedures if p.name == self.location[-1]), None)
-            # print(f"Iterator '{node.pidentifier.name}' deallocated from memory location {procedure_it.foriterators[node.pidentifier.name]}")
             del procedure_it.foriterators[node.pidentifier.name]
-        # self.memory_counter -= 2
 
     def gen_DeclarationsNode(self, node):
         for var in node.variables:
-            if self.location[-1] == "main" and var.is_array_range: #proc should not be here
-                # self.array_variables.add(var.name)
+            if self.location[-1] == "main" and var.is_array_range:
                 base_location = self.memory_counter
                 size = var.end - var.start + 1
                 self.variables[var.name] = base_location
@@ -315,12 +305,11 @@ class CodeGenerator:
                 self.memory_counter += size
                 self.add_instruction(f"STORE {self.memory_counter}")
                 self.memory_counter += 1
-                print(f"Array '{var.name}' allocated at memory location {base_location} with size {size} start {var.start} end {var.end} offset {base_location-var.start} (offset location {base_location+size})")
+                # print(f"Array '{var.name}' allocated at memory location {base_location} with size {size} start {var.start} end {var.end} offset {base_location-var.start} (offset location {base_location+size})")
             elif self.location[-1] == "main":
-                # self.scalar_variables.add(var.name)
                 self.variables[var.name] = self.memory_counter
                 self.memory_counter += 1
-                print(f"Variable '{var.name}' allocated at memory location {self.variables[var.name]}")
+                # print(f"Variable '{var.name}' allocated at memory location {self.variables[var.name]}")
             else:
                 procedure_it = next((p for p in self.procedures if p.name == self.location[-1]), None)
                 if var.is_array_range:
@@ -332,11 +321,11 @@ class CodeGenerator:
                     self.memory_counter += size
                     self.add_instruction(f"STORE {self.memory_counter}")
                     self.memory_counter += 1
-                    print(f"Array '{var.name}' allocated at memory location {base_location} with size {size} start {var.start} end {var.end} offset {base_location-var.start} (offset location {base_location+size})")
+                    # print(f"Array '{var.name}' allocated at memory location {base_location} with size {size} start {var.start} end {var.end} offset {base_location-var.start} (offset location {base_location+size})")
                 else:
                     procedure_it.declarations[var.name] = self.memory_counter
                     self.memory_counter += 1
-                    print(f"Variable '{var.name}' allocated at memory location {procedure_it.declarations[var.name]}")
+                    # print(f"Variable '{var.name}' allocated at memory location {procedure_it.declarations[var.name]}")
 
     def gen_ProcedureNode(self, node):
         self.location.append(f"{node.procedure_head.procedure_name}")
@@ -373,12 +362,7 @@ class CodeGenerator:
             self.generate(procedure)
 
     def gen_ArgumentNode(self, node):
-        if node.is_array:
-            pass
-            # print(f"AgumentNode - {node.argument_name} is an array")
-        else:
-            pass
-            # print(f"AgumentNode - {node.argument_name} Not an array")
+        pass
 
     def gen_ProcedureCallNode(self, node):
         procedure_it = next((p for p in self.procedures if p.name == node.procedure_name), None) #destination procedure
@@ -391,8 +375,6 @@ class CodeGenerator:
             if argument.name in self.variables: # Check whole this if
                 if argument.name in self.foriterators:
                     raise Exception(f"Iterator \"{argument.name}\" can't be procedure argument")
-                    self.add_instruction(f"SET {self.foriterators[argument]}")
-                    self.add_instruction(f"STORE {result}")
                 elif argument.name in self.array_info:
                     if corresponding_key not in procedure_it.argument_is_array:
                         raise Exception(f"Procedure {procedure_it.name}() - argument on {indexo} position should not be array")
@@ -432,7 +414,7 @@ class CodeGenerator:
                 else:
                     raise Exception(f"Identifier \"{argument.name}\" undeclared")
 
-        self.add_instruction(f"SET {len(self.instructions) + 3}") # or +4
+        self.add_instruction(f"SET {len(self.instructions) + 3}")
         self.add_instruction(f"STORE {procedure_it.address}")
         jumpoffset = procedure_it.jump_address - len(self.instructions)
         self.add_instruction(f"JUMP {jumpoffset}")
@@ -445,7 +427,9 @@ class CodeGenerator:
             if not node.value.index:
                 raise Exception(f"Array '{node.value.name}' must be accessed with an index")                
             if isinstance(node.value.index, ValueNode):
-                self.add_instruction(f"PUT {self.get_memory_location(node.value)}")
+                self.generate(node.value)
+                self.add_instruction(f"PUT 0")
+                # self.add_instruction(f"PUT {self.get_memory_location(node.value)}")
             elif isinstance(node.value.index, IdentifierNode): 
                 self.generate(node.value)
                 self.add_instruction(f"PUT 0")
@@ -459,6 +443,7 @@ class CodeGenerator:
 
         
     def gen_ReadNode(self, node):
+        # procedure_it.declaration_is_declared.add(node.identifier.name)
         self.add_instruction(f"GET {self.get_memory_location(node.identifier)}")
 
     def gen_ValueNode(self, node):
@@ -601,9 +586,7 @@ class CodeGenerator:
         # Set sign
         # Counter == 0 -> result is positive
         # Counter == -1 -> result is negative
-        # Counter == 1 -> result is negative
-        # self.add_instruction(f"LOAD 3")
-        # self.add_instruction(f"PUT 3")   
+        # Counter == 1 -> result is negative 
         self.add_instruction(f"LOAD {sign}")
         self.add_instruction(f"JZERO 5")   #JZERO
         self.add_instruction(f"LOAD {ZERO_CONSTANT_ADDR}")
@@ -913,8 +896,6 @@ class CodeGenerator:
         if node.name in self.array_info:
             if not node.index:
                 raise Exception(f"Array '{node.name}' must be accessed with an index")
-            # if not node.index and node.name in self.array_variables:
-            #     raise Exception(f"Array '{node.name}' must be accessed with an index")
             if isinstance(node.index, ValueNode):
                 self.add_instruction(f"LOAD {self.get_memory_location(node)}")
             elif isinstance(node.index, IdentifierNode):
@@ -969,8 +950,7 @@ class CodeGenerator:
                     elif node.index.name in procedure_it.foriterators:
                         self.add_instruction(f"LOAD {procedure_it.foriterators[node.index.name]}")
                     else:
-                        print(f"raise exepio")
-                        raise Exception(f"\"{node.index.name}\" Undeclared - (Unexpected, maybe ERROR because of unemplimented for_iterators)2")
+                        raise Exception(f"\"{node.index.name}\" Undeclared")
                     self.add_instruction(f"STORE 2") #index
                     self.add_instruction(f"SET {procedure_it.declarations[node.name]}")
                     self.add_instruction(f"ADD 2") #add index to offset
@@ -998,13 +978,11 @@ class CodeGenerator:
             if isinstance(node.index, ValueNode):
                 base_location, start_index, _, offset= self.array_info[node.name]
                 return base_location + node.index.value - start_index
-            else:
-                pass
-                # print("PROBLEM IS HERE")
         elif node.name in self.variables:
             return self.variables[node.name]
+        elif node.name in self.foriterators:
+            return self.foriterators[node.name]
         else: #procedures
-            # print(f"SHOULD NOT CALL {node.name}")
             procedure_it = next((p for p in self.procedures if p.name == self.location[-1]))
             for argument, argument_address in procedure_it.arguments:
                 if node.name == argument:
@@ -1014,7 +992,6 @@ class CodeGenerator:
                     return declaration_address
             for foriterator, foriterator_address in procedure_it.foriterators:
                 if node.name == foriterator:
-                    print(f"Untested")
                     return foriterator_address
 
     def get_code(self):

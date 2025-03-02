@@ -1,0 +1,15 @@
+# błąd: niewłaściwy parametr procedury pa w linii 13
+PROCEDURE pa(T a, bi) IS
+ c[0:5],d
+BEGIN
+  d:=bi;
+  a[d]:=c[d]+a[bi];
+END
+
+PROGRAM IS
+ a[1:10],b
+BEGIN
+  READ b;
+  pa(a,a);
+  WRITE a[b];
+END
