@@ -18,7 +18,6 @@ END
 PROGRAM IS
   a,b,c,d,x,y,z
 BEGIN
-  x:= 777;
   READ a;
   READ b;
   READ c;

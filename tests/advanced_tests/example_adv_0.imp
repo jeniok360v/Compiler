@@ -1,4 +1,4 @@
-PROCEDURE licz(T s, k) IS
+PROCEDURE assign(T s, k) IS
   n
 BEGIN
 	n := 5;
@@ -16,9 +16,8 @@ PROGRAM IS
   n, sito[2:20]
 BEGIN
   n:=6;
-  WRITE sito[n];
-  licz(sito,n);
-	FOR i FROM 2 TO 20 DO
+  assign(sito,n);
+	FOR i FROM 2 TO 10 DO
 		WRITE sito[i];
 	ENDFOR
 	WRITE sito[4];
