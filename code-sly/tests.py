@@ -53,7 +53,7 @@ def test_program(test_case, capsys):
     actual_outputs = [
         int(match.group(1))
         for line in output_lines
-        if (match := re.search(r">\s*(\d+)", line))  # Use match assignment
+        if (match := re.search(r">\s*(\d+)", line))
     ]
     assert actual_outputs == expected_outputs
 
@@ -68,4 +68,3 @@ def test_program(test_case, capsys):
             print("Complexity cost: " + complexity + "; including i/o: " + io)
         else:
             print("Complexity not found")
-
