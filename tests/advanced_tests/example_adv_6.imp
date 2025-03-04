@@ -1,28 +1,29 @@
-PROCEDURE licz(T s, n) IS
-  j
-BEGIN
-  FOR i FROM 2 TO n DO
-    s[i]:=1;
-  ENDFOR
-  FOR i FROM 2 TO n DO
-    IF s[i]>0 THEN 
-      j:=i+i;
-      WHILE j<=n DO
-        s[j]:=0;
-        j:=j+i;
-      ENDWHILE
-    ENDIF
-  ENDFOR
-END
 
 PROGRAM IS
-  n, sito[2:100]
+  a, sito[2:100], v, aa, g, c, vie, viie, d, n, p
 BEGIN
-  n:=100;
-  licz(sito,n);
-  FOR i FROM n DOWNTO 2 DO
-    IF sito[i]>0 THEN
-      WRITE i;
-    ENDIF
-  ENDFOR
+  vie := 0- 1000000;
+  viie := 2000;
+  v := 9;
+  aa:= 0- 9;
+  g:= 5;
+  c := 0- 5;
+  a:=100;
+  d:=0;
+  n:=333;
+  p:=23;
+  sito[17] :=v*g;
+  sito[18] :=v*c;
+  sito[19] :=aa*g;
+  sito[20] :=aa*c;
+  sito[21] := d*c;
+  sito[22] := n*aa;
+  sito[p] := g*p;
+  p := p+1;
+  sito[p] := d*d;
+  sito[25] := 11%2;
+    FOR i FROM 17 TO 25 DO
+        WRITE sito[i];
+    ENDFOR
+
 END

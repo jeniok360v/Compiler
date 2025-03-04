@@ -1,30 +1,29 @@
-PROCEDURE licz(T s, n) IS
-  j, b
+PROCEDURE wt(T s, n) IS
+  j, b, i
 BEGIN
-  FOR k FROM 14 TO 29 DO
-    s[k] := 2;
-    ENDFOR
-  j := 3;
-  b := j;
-  j := n;
-  n := 22;
-  s[2]:=12;
+  i := 10;
+  b := 2;
+  j := 6;
+  s[b] := j-4;
+  n := j;
+  FOR k FROM s[b] TO n DO
+    s[k] := 123 + i;
+    i := i + 10;
+  ENDFOR
 
 END
 PROCEDURE wypisz(T s, n) IS
 BEGIN
   FOR i FROM n DOWNTO 2 DO
-    IF s[i]>0 THEN
-      WRITE i;
       WRITE s[i];
-    ENDIF
   ENDFOR
 END
+
 PROGRAM IS
   a, sito[2:100]
 BEGIN
   a:=100;
-  licz(sito,a);
+  wt(sito,a);
   WRITE a;
   wypisz(sito,a);
 END

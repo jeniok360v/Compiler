@@ -1,30 +1,57 @@
-PROCEDURE gcd(a,b,c) IS
-  x,y
+PROCEDURE licz(T s, n) IS
+  j, b, k, p, v, g, a, c
 BEGIN
-  x:=a;
-  y:=b;
-  WHILE y>0 DO
-    IF x>=y THEN 
-      x:=x-y;
-    ELSE 
-      x:=x+y;
-      y:=x-y;
-      x:=x-y;    
-    ENDIF
-  ENDWHILE
-  c:=x;
-END
+  v := 9;
+  a:= 0-9;
+  g:= 5;
+  c := 10-15;
+  p := 2;
+  k := 10;
+  j := 11;
+  b := 13;
+  n := 22;
+  s[b] := v%g;
+  b := b+1;
+  s[b] := v%c;
+  b := b+1;
+  s[b] := a%g;
+  b := b+1;
+  s[b] := a%c;
+  WRITE v;
+  WRITE g;
+  WRITE a;
+  WRITE c;
 
-PROGRAM IS
-  a,b,c,d,x,y,z
+END
+PROCEDURE wypisz(T s, n) IS
 BEGIN
-  x:= 777;
-  READ a;
-  READ b;
-  READ c;
-  READ d;
-  gcd(a,b,x);
-  gcd(c,d,y);
-  gcd(x,y,z);
-  WRITE z;
+  FOR i FROM n DOWNTO 2 DO
+    IF s[i]>0 THEN
+      WRITE i;
+    ENDIF
+  ENDFOR
+END
+PROGRAM IS
+  a, sito[2:100], v, aa, g, c, vie, viie
+BEGIN
+  vie := 0-1000000;
+  viie := 2000;
+  v := 9;
+  aa:= 0-9;
+  g:= 5;
+  c := 0-5;
+  a:=100;
+  licz(sito,a);
+  FOR i FROM 13 TO 16 DO
+      WRITE sito[i];
+  ENDFOR
+  sito[17] :=v/g;
+  sito[18] :=v/c;
+  sito[19] :=aa/g;
+  sito[20] :=aa/c;
+  sito[21] := vie%viie;
+    FOR i FROM 17 TO 21 DO
+        WRITE sito[i];
+    ENDFOR
+
 END

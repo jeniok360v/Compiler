@@ -24,6 +24,12 @@ test_cases = {
     ],
     "advanced": [
         {"input_file": "../tests/advanced_tests/example_adv_0.imp", "inputs": [], "expected_outputs": [102, 103, 104, 105, 106, 107, 108, 109, 110, 104, 105, 106]},
+        {"input_file": "../tests/advanced_tests/example_adv_1.imp", "inputs": [], "expected_outputs": [6, 173, 163, 153, 143, 133]},
+        {"input_file": "../tests/advanced_tests/example_adv_2.imp", "inputs": [], "expected_outputs": [23, 22, 12, 23, 24, 11, 22, 33, 24, 23, 35, 28, 14, 100000, 1000, 19, 14, 1000, 18, 28, 1000, 17, 35, 1000, 16, 23, 1000, 15, 24, 1000, 14, 33, 1000, 13, 22, 1000, 12, 11, 1000, 11, 24, 1000, 10, 23, 1000, 9, 12]},
+        {"input_file": "../tests/advanced_tests/example_adv_3.imp", "inputs": [], "expected_outputs": [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 33333333, 1000, 1000, 1000, 1001, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 99999999, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1001, 1000, 1000, 1000]},
+        {"input_file": "../tests/advanced_tests/example_adv_4.imp", "inputs": [], "expected_outputs": [9, 5, -9, -5, 4, -1, 1, -4, 1, -2, -2, 1, 0]},
+        {"input_file": "../tests/advanced_tests/example_adv_5.imp", "inputs": [], "expected_outputs": [2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 10]},
+        {"input_file": "../tests/advanced_tests/example_adv_6.imp", "inputs": [], "expected_outputs": [45, -45, -45, 45, 0, -2997, 115, 0, 1]},
     ],
 }
 
@@ -53,7 +59,7 @@ def test_program(test_case, capsys):
     actual_outputs = [
         int(match.group(1))
         for line in output_lines
-        if (match := re.search(r">\s*(\d+)", line))
+        if (match := re.search(r">\s*(-?\d+)", line))
     ]
     assert actual_outputs == expected_outputs
 

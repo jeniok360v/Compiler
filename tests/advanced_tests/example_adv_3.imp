@@ -7,13 +7,14 @@ BEGIN
     WRITE s[i];
   ENDFOR
   s[j] := 1001;
-
+  WRITE 33333333;
 END
+
 PROCEDURE wypisz(T fs, n) IS
 BEGIN
   FOR i FROM n DOWNTO 2 DO
     IF fs[i]>0 THEN
-      WRITE i;
+      WRITE fs[i];
     ENDIF
   ENDFOR
 END
@@ -22,7 +23,9 @@ PROGRAM IS
 BEGIN
   n:=20;
   licz(sito,n);
-      FOR i FROM 2 TO 20 DO
-        WRITE sito[i];
+    FOR i FROM 2 TO 20 DO
+      WRITE sito[i];
     ENDFOR
+  WRITE 99999999;
+  wypisz(sito,n);
 END

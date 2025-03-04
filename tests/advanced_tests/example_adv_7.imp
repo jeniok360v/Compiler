@@ -1,41 +1,38 @@
-# ? 0
-# ? 1
-# > 46368
-# > 28657
-
-PROCEDURE pa(a,b) IS
+PROCEDURE gcd(a,b,c) IS
+  x,y
 BEGIN
-  a:=a+b;
-  b:=a-b;
-END
-
-PROCEDURE pb(ci,d) IS
-BEGIN
-  pa(ci,d);
-  pa(ci,d);
-END
-
-PROCEDURE pc(a,b) IS
-BEGIN
-  pb(a,b);
-  pb(a,b);
-  pb(a,b);
-END
-
-PROCEDURE pd(a,b) IS
-BEGIN
-  pc(a,b);
-  pc(a,b);
-  pc(a,b);
-  pc(a,b);
+  x:=a+3;
+  y:=b;
+  WHILE y>0 DO
+    IF x>=y THEN 
+      x:=x-y;
+    ELSE 
+      x:=x+y;
+      y:=x-y;
+      x:=x-y;    
+    ENDIF
+  ENDWHILE
+  c:=x;
 END
 
 PROGRAM IS
-  a,b
+	n, j, ta[0:24], tb[0:24], tc[0:24]
 BEGIN
-  READ a;
-  READ b;
-  pd(a,b);
-  WRITE a;
-  WRITE b;
+	x := 24;
+	n:=24;
+	tc[0]:=n;
+	tc[n]:=n- 24;
+  j:=tc[0]+1;
+  FOR i FROM tc[0] DOWNTO tc[n] DO
+		ta[i]:=i+1;
+		tb[i]:=j-i;
+	ENDFOR
+  j:=tc[n];
+  WHILE j<tc[0] DO
+		tc[j]:=ta[j]*tb[j];
+    j:=j+1;
+	ENDWHILE
+  FOR k FROM 0 TO n DO
+		WRITE tc[k];
+	ENDFOR
 END

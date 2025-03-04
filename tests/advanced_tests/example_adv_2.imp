@@ -1,12 +1,12 @@
 PROCEDURE licz(T s, n) IS
   j, b, k, p
 BEGIN
-  p := 2;
+  p := 9;
   k := 10;
   j := 11;
   b := 13;
   n := 22;
-  s[2]:=12;
+  s[p]:=12;
   s[10] := 23;
   s[j] := 24;
   s[12] := j;
@@ -20,8 +20,8 @@ BEGIN
   b := b+1;
   s[b] := s[k] + s[p];
   b := b+1;
-  s[n] := 14;
-  s[b] := s[n] + s[n];
+  s[19] := 14;
+  s[b] := s[19] + s[19];
   WRITE s[10];
 
 END
@@ -29,17 +29,21 @@ PROCEDURE wypisz(T s, n) IS
 BEGIN
   FOR i FROM n DOWNTO 2 DO
     IF s[i]>0 THEN
+      WRITE 1000;
       WRITE i;
+      WRITE s[i];
     ENDIF
   ENDFOR
 END
+
 PROGRAM IS
   a, sito[2:100]
 BEGIN
-  a:=100;
   licz(sito,a);
   WRITE a;
-    FOR i FROM 2 TO 25 DO
+    FOR i FROM 9 TO 19 DO
         WRITE sito[i];
     ENDFOR
+  WRITE 100000;
+  wypisz(sito,a);
 END

@@ -910,6 +910,7 @@ class CodeGenerator:
                 raise Exception(f"Variable '{node.name}' is not an array")
             self.add_instruction(f"LOAD {self.get_memory_location(node)}")
         else: #in procedure
+            # print(f"Iden {node.name}")
             procedure_it = next((p for p in self.procedures if self.location[-1] == p.name), None)
             if node.name in procedure_it.arguments:
                 if node.name in procedure_it.argument_is_array:
