@@ -110,6 +110,8 @@ class CodeGenerator:
             self.add_instruction(f"STORE {self.get_memory_location(node.identifier)}")
         else: #procedure arguments
             procedure_it = next((p for p in self.procedures if p.name == self.location[-1]), None)
+            if not procedure_it:
+                raise Exception(f"\"{node.identifier.name}\" Undeclared ")
             if node.identifier.name in procedure_it.foriterators:
                 raise Exception(f"\"{node.identifier.name}\" can't be modified")
             if node.identifier.name in procedure_it.arguments:

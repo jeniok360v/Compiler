@@ -1,20 +1,3 @@
-PROCEDURE gcd(a,b,c) IS
-  x,y
-BEGIN
-  x:=a+3;
-  y:=b;
-  WHILE y>0 DO
-    IF x>=y THEN 
-      x:=x-y;
-    ELSE 
-      x:=x+y;
-      y:=x-y;
-      x:=x-y;    
-    ENDIF
-  ENDWHILE
-  c:=x;
-END
-
 PROGRAM IS
 	n, j, ta[0:24], tb[0:24], tc[0:24]
 BEGIN
