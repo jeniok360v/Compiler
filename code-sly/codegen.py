@@ -892,7 +892,7 @@ class CodeGenerator:
             self.add_instruction(f"JPOS 3")
             self.add_instruction(f"LOAD {ONE_CONSTANT_ADDR}")
             self.add_instruction(f"JUMP 2")
-            self.add_instruction(f"LOAD {ZERO_CONSTANT_ADDR}")            
+            self.add_instruction(f"LOAD {ZERO_CONSTANT_ADDR}")
 
     def gen_IdentifierNode(self, node):
         if node.name in self.array_info:
@@ -914,6 +914,8 @@ class CodeGenerator:
         else: #in procedure
             # print(f"Iden {node.name}")
             procedure_it = next((p for p in self.procedures if self.location[-1] == p.name), None)
+            if not procedure_it:
+                raise Exception(f"\"{node.name}\" Undeclared ")
             if node.name in procedure_it.arguments:
                 if node.name in procedure_it.argument_is_array:
                     if not node.index:
@@ -981,6 +983,8 @@ class CodeGenerator:
             if isinstance(node.index, ValueNode):
                 base_location, start_index, _, offset= self.array_info[node.name]
                 return base_location + node.index.value - start_index
+            if isinstance(node.index, IdentifierNode):
+                raise Exception(f"\"get_memory_location()\" does not support x[y] case")
         elif node.name in self.variables:
             return self.variables[node.name]
         elif node.name in self.foriterators:

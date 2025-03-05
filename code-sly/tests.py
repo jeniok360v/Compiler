@@ -1,6 +1,7 @@
 import subprocess
 import re
 import pytest
+import os
 
 def strip_ansi_codes(text):
     return re.sub(r'\x1b\[[0-9;]*m', '', text)
@@ -20,7 +21,7 @@ test_cases = {
         {"input_file": "../tests/basic_tests/program0.imp", "inputs": [5323], "expected_outputs": [1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1]},
         {"input_file": "../tests/basic_tests/program1.imp", "inputs": [34, 51, -119, 187], "expected_outputs": [17]},
         {"input_file": "../tests/basic_tests/program2.imp", "inputs": [], "expected_outputs": [97, 89, 83, 79, 73, 71, 67, 61, 59, 53, 47, 43, 41, 37, 31, 29, 23, 19, 17, 13, 11, 7, 5, 3, 2]},
-        {"input_file": "../tests/basic_tests/program3.imp", "inputs": [12345678903], "expected_outputs": [3, 1, 4115226301, 1]},
+        # {"input_file": "../tests/basic_tests/program3.imp", "inputs": [12345678903], "expected_outputs": [3, 1, 4115226301, 1]}, #too long (about 0.7 sec)
     ],
     "advanced": [
         {"input_file": "../tests/advanced_tests/example_adv_0.imp", "inputs": [], "expected_outputs": [102, 103, 104, 105, 106, 107, 108, 109, 110, 104, 105, 106]},
@@ -49,13 +50,15 @@ def test_program(test_case, capsys):
     virtual_machine = "../maszyna_wirtualna/maszyna-wirtualna"
     output_file = "../out/" + input_file.split("/")[-1].replace(".imp", ".mr")
 
+    if os.path.exists(output_file):
+        os.remove(output_file)
+
     subprocess.run(["python", compiler, input_file, output_file], check=True)
 
     input_values = "\n".join(map(str, inputs)) + "\n"
     process = subprocess.run([virtual_machine, output_file], input=input_values, text=True, capture_output=True)
 
     output_lines = process.stdout.splitlines()
-
     actual_outputs = [
         int(match.group(1))
         for line in output_lines

@@ -4,4 +4,4 @@ __pycache__/
 venv/
 maszyna-wirtualna/maszyna-wirtualna
 *.o
-out/*
+out/
