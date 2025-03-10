@@ -948,12 +948,8 @@ class CodeGenerator:
                 base_location, start_index, _, _= self.array_info[node.name]
                 return base_location + node.index.value - start_index
             elif isinstance(node.index, IdentifierNode):
-                index_addr = self.get_memory_location(node.index)
-                base_location, start_index, size, _ = self.array_info[node.name]
-                self.add_instruction(f"LOAD {index_addr}")
-                self.add_instruction(f"ADD {base_location + size}")
-                self.add_instruction(f"STORE {POINTER_HANDLING_ADDR}")
-                return POINTER_HANDLING_ADDR
+                # return self.get_index_memory_location(node.index)
+                return self.get_array_memory_location_by_index_name(node)
         elif node.name in self.variables:
             # print(f"get_memory_location({node.name}) in self.variables, address {self.variables[node.name]}")
             return self.variables[node.name]
@@ -971,6 +967,15 @@ class CodeGenerator:
             for foriterator, foriterator_address in procedure_it.foriterators:
                 if node.name == foriterator:
                     return foriterator_address
+
+    def get_array_memory_location_by_index_name(self, node):
+        index_addr = self.get_memory_location(node.index)
+        base_location, start_index, size, _ = self.array_info[node.name]
+        self.add_instruction(f"LOAD {index_addr}")
+        self.add_instruction(f"ADD {base_location + size}")
+        self.add_instruction(f"STORE {POINTER_HANDLING_ADDR}")
+        return POINTER_HANDLING_ADDR
+
 
     def get_code(self):
         self.resolve_placeholders()
