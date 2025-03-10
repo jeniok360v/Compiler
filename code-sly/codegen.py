@@ -600,27 +600,12 @@ class CodeGenerator:
         self.add_instruction(f"LOAD {product}")
 
     def divide(self, dividend, divisor):
-        if divisor == 0 or dividend == 0:
+        if divisor == 0:
             return 0
-        sign = 0
-        quotient = 0
-        if dividend < 0:
-            sign -= 1
-            dividend = -dividend
-        if divisor < 0:
-            sign += 1
-            divisor = -divisor
-
-        while dividend >= divisor:
-            dividend -= divisor
-            quotient += 1
-
-        if sign != 0:
-            if dividend > 0:
-                quotient += 1
-            quotient = -quotient
-
-        return quotient
+        sign = -1 if (dividend < 0) ^ (divisor < 0) else 1
+        dividend, divisor = abs(dividend), abs(divisor)
+        quotient = dividend // divisor
+        return sign * quotient
 
     def gen_divide(self, node):
         dividend = 1
@@ -743,20 +728,7 @@ class CodeGenerator:
         self.add_instruction(f"LOAD {result_temp}")
 
     def modulo(self, dividend, divisor):
-        if divisor == 0:
-            return 0
-        remainder = dividend
-        if divisor > 0:
-            while remainder >= divisor:
-                remainder -= divisor
-            while remainder < 0:
-                remainder += divisor
-        else:
-            while remainder <= divisor:
-                remainder -= divisor
-            while remainder > 0:
-                remainder += divisor
-        return remainder
+        return dividend % divisor if divisor != 0 else 0
 
     def gen_modulo(self, node):
         dividend = 1

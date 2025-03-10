@@ -32,8 +32,9 @@ BEGIN
   ENDFOR
 END
 PROGRAM IS
-  a, sito[2:100], v, aa, g, c, vie, viie
+  a, sito[2:100], v, aa, g, c, vie, viie, zero
 BEGIN
+  zero := 0;
   vie := 0-1000000;
   viie := 2000;
   v := 9;
@@ -50,7 +51,11 @@ BEGIN
   sito[19] :=aa/g;
   sito[20] :=aa/c;
   sito[21] := vie%viie;
-    FOR i FROM 17 TO 21 DO
+  sito[22] := 0/3;
+  sito[23] := 3/0;
+  sito[24] := 3%0;
+  sito[25] := 0%3;
+    FOR i FROM 17 TO 25 DO
         WRITE sito[i];
     ENDFOR
 
