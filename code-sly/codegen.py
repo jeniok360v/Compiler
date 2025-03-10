@@ -512,7 +512,6 @@ class CodeGenerator:
         sign = 3
         counter = 4
         product = 5
-        temp = 6
         if isinstance(node.left, ValueNode) and isinstance(node.right, ValueNode):
             result = node.left.value * node.right.value
             self.add_instruction(f"SET {result}")
@@ -535,9 +534,9 @@ class CodeGenerator:
         
         # Check if one of the values is 0
         self.add_instruction(f"LOAD {left}")
-        self.add_instruction(f"JZERO 46")  #JZERO
+        self.add_instruction(f"JZERO 45")  #JZERO
         self.add_instruction(f"LOAD {right}")
-        self.add_instruction(f"JZERO 44")   #JZERO
+        self.add_instruction(f"JZERO 43")   #JZERO
 
         self.add_instruction(f"LOAD {ZERO_CONSTANT_ADDR}")
         self.add_instruction(f"STORE {sign}")
@@ -590,13 +589,11 @@ class CodeGenerator:
         # Counter == -1 -> result is negative
         # Counter == 1 -> result is negative 
         self.add_instruction(f"LOAD {sign}")
-        self.add_instruction(f"JZERO 5")   #JZERO
+        self.add_instruction(f"JZERO 4")   #JZERO
         self.add_instruction(f"LOAD {ZERO_CONSTANT_ADDR}")
         self.add_instruction(f"SUB {product}")
-        self.add_instruction(f"STORE {product}") #? don't need
         self.add_instruction(f"JUMP 2")    #JUMP
 
-        # Return result
         self.add_instruction(f"LOAD {product}")
 
     def divide(self, dividend, divisor):
