@@ -38,7 +38,6 @@ def main():
             machine_code = codegen.get_code()
             with open(output_file, 'w') as file:
                 file.write(machine_code)
-                # print(f"Machine code written to {output_file}")
         else:
             print("No AST generated.")
     except Exception as e:

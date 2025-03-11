@@ -303,7 +303,7 @@ class CodeGenerator:
         procedureinfo.name = node.procedure_head.procedure_name
 
         self.procedures.append(procedureinfo)
-        self.memory_counter += 1    #return address
+        self.memory_counter += 1
         self.generate(node.procedure_head)
         
         if node.declarations:
@@ -563,12 +563,7 @@ class CodeGenerator:
         self.add_instruction(f"LOAD {product}")
 
     def divide(self, dividend, divisor):
-        if divisor == 0:
-            return 0
-        sign = -1 if (dividend < 0) ^ (divisor < 0) else 1
-        dividend, divisor = abs(dividend), abs(divisor)
-        quotient = dividend // divisor
-        return sign * quotient
+        return dividend // divisor if divisor !=0 else 0
 
     def gen_divide(self, node):
         dividend = 1
@@ -599,7 +594,7 @@ class CodeGenerator:
             self.add_instruction(f"STORE {divisor}")
 
         self.add_instruction(f"LOAD {dividend}")
-        self.add_instruction(f"JZERO 70")    # TODO:
+        self.add_instruction(f"JZERO 70")
         self.add_instruction(f"LOAD {divisor}")
         self.add_instruction(f"JZERO 68")
 
