@@ -14,5 +14,5 @@ pytest tests.py -m advanced\
 pytest tests.py -vv
 
 # Compiler ranking
-25th place out of 62
+25th place out of 62\
 Good luck to the future generations
