@@ -5,6 +5,11 @@ BEGIN
     nums[u] := u * k;
   ENDFOR
 
+  index := 12;
+  nums[k] := 50;
+  nums[11] := 60;
+  nums[index] := 70;
+
   FOR y FROM 0 TO 10 DO
     index := 10 + y;
     s[y] := nums[index] + 4;

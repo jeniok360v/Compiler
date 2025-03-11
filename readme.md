@@ -11,4 +11,4 @@ Executing all testcases at once:
 pytest tests.py
 pytest tests.py -m basic
 pytest tests.py -m advanced
-
+pytest tests.py -vv
