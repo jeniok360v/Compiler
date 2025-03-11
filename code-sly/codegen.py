@@ -97,7 +97,6 @@ class CodeGenerator:
             if isinstance(node.identifier.index, ValueNode): 
                 self.add_instruction(f"STORE {self.get_memory_location(node.identifier)}")
             elif isinstance(node.identifier.index, IdentifierNode):
-                # print(f"Assign node. Name: {node.identifier.name}, Index name: {node.identifier.index.name}")
                 base_location, start_index, size, offset= self.array_info[node.identifier.name]
                 self.add_instruction(f"STORE 1")
                 self.add_instruction(f"LOAD {self.get_memory_location(node.identifier.index)}")
@@ -304,11 +303,11 @@ class CodeGenerator:
                 self.memory_counter += size
                 self.add_instruction(f"STORE {self.memory_counter}")
                 self.memory_counter += 1
-                # print(f"Array '{var.name}' allocated at memory location {base_location} with size {size} start {var.start} end {var.end} offset {base_location-var.start} (offset location {base_location+size})")
+                print(f"Array '{var.name}' allocated at memory location {base_location} with size {size} start {var.start} end {var.end} offset {base_location-var.start} (offset location {base_location+size})")
             elif self.location[-1] == "main":
                 self.variables[var.name] = self.memory_counter
                 self.memory_counter += 1
-                # print(f"Variable '{var.name}' allocated at memory location {self.variables[var.name]}")
+                print(f"Variable '{var.name}' allocated at memory location {self.variables[var.name]}")
             else:
                 procedure_it = next((p for p in self.procedures if p.name == self.location[-1]), None)
                 if var.is_array_range:
@@ -320,11 +319,11 @@ class CodeGenerator:
                     self.memory_counter += size
                     self.add_instruction(f"STORE {self.memory_counter}")
                     self.memory_counter += 1
-                    # print(f"Array '{var.name}' allocated at memory location {base_location} with size {size} start {var.start} end {var.end} offset {base_location-var.start} (offset location {base_location+size})")
+                    print(f"Array '{var.name}' allocated at memory location {base_location} with size {size} start {var.start} end {var.end} offset {base_location-var.start} (offset location {base_location+size})")
                 else:
                     procedure_it.declarations[var.name] = self.memory_counter
                     self.memory_counter += 1
-                    # print(f"Variable '{var.name}' allocated at memory location {procedure_it.declarations[var.name]}")
+                    print(f"Variable '{var.name}' allocated at memory location {procedure_it.declarations[var.name]}")
 
     def gen_ProcedureNode(self, node):
         self.location.append(f"{node.procedure_head.procedure_name}")
@@ -875,46 +874,31 @@ class CodeGenerator:
         elif node.name in self.foriterators:
             self.add_instruction(f"LOAD {self.get_memory_location(node)}")
         else: #in procedure
-            # print(f"Iden {node.name}")
             procedure_it = next((p for p in self.procedures if self.location[-1] == p.name), None)
             if not procedure_it:
                 raise Exception(f"\"{node.name}\" Undeclared (0x0006)")
-            if node.name in procedure_it.arguments:
+            if node.name in procedure_it.foriterators:
+                self.add_instruction(f"LOAD {self.get_memory_location(node, procedure_it)}")
+            elif node.name in procedure_it.arguments:
                 if node.name in procedure_it.argument_is_array:
                     if not node.index:
                         raise Exception(f"Array '{node.name}' must be accessed with an index")
-                    self.add_instruction(f"LOADI {self.get_memory_location(node, procedure_it)}")
                 else:
                     if node.index:
                         raise Exception(f"Variable '{node.name}' is not an array")
-                    self.add_instruction(f"LOADI {procedure_it.arguments[node.name]}")
+                self.add_instruction(f"LOADI {self.get_memory_location(node, procedure_it)}")
             elif node.name in procedure_it.declarations:
                 if node.name in procedure_it.declarations_array_info:
                     if not node.index:
                         raise Exception(f"Array '{node.name}' must be accessed with an index")
-                    base_location, start_index, size, offset = procedure_it.declarations_array_info[node.name]
                     if isinstance(node.index, ValueNode):
-                        self.add_instruction(f"LOAD {offset + node.index.value}")
-                        return #?
-                    elif node.index.name in procedure_it.arguments:
-                        self.add_instruction(f"LOADI {procedure_it.arguments[node.index.name]}")
-                    elif node.index.name in procedure_it.declarations:
-                        self.add_instruction(f"LOAD {procedure_it.declarations[node.index.name]}")
-                    elif node.index.name in procedure_it.foriterators:
-                        self.add_instruction(f"LOAD {procedure_it.foriterators[node.index.name]}")
+                        self.add_instruction(f"LOAD {self.get_memory_location(node, procedure_it)}")
                     else:
-                        raise Exception(f"\"{node.index.name}\" Undeclared (0x0008)")
-                    self.add_instruction(f"STORE 2") #index
-                    self.add_instruction(f"SET {procedure_it.declarations[node.name]}")
-                    self.add_instruction(f"ADD 2") #add index to offset
-                    self.add_instruction(f"STORE {POINTER_HANDLING_ADDR}")
-                    self.add_instruction(f"LOADI {POINTER_HANDLING_ADDR}")
+                        self.add_instruction(f"LOADI {self.get_memory_location(node, procedure_it)}")
                 else:
                     if node.index:
                         raise Exception(f"Variable '{node.name}' is not an array")
-                    self.add_instruction(f"LOAD {procedure_it.declarations[node.name]}")
-            elif node.name in procedure_it.foriterators:
-                self.add_instruction(f"LOAD {procedure_it.foriterators[node.name]}")
+                    self.add_instruction(f"LOAD {self.get_memory_location(node, procedure_it)}")
             else:
                 raise Exception(f"\"{node.name}\" Undeclared (0x0009)")
 
@@ -928,31 +912,43 @@ class CodeGenerator:
 
     def get_memory_location(self, node, procedure_it = None):
         if node.name in self.array_info:
-            # print(f"get_memory_location({node.name}) in self.array_info")
             if isinstance(node.index, ValueNode):
                 base_location, start_index, _, _= self.array_info[node.name]
                 return base_location + node.index.value - start_index
             elif isinstance(node.index, IdentifierNode):
-                # return self.get_index_memory_location(node.index)
                 return self.get_array_memory_location_by_index_name(node)
         elif node.name in self.variables:
-            # print(f"get_memory_location({node.name}) in self.variables, address {self.variables[node.name]}")
             return self.variables[node.name]
         elif node.name in self.foriterators:
-            # print(f"get_memory_location({node.name}) in self.foriterators, address: {self.foriterators[node.name]}")
             return self.foriterators[node.name]
         # procedures
+        elif node.name in procedure_it.foriterators:
+            return procedure_it.foriterators[node.name]
         elif node.name in procedure_it.arguments:
             if node.name in procedure_it.argument_is_array:
-                print(f"get_memory_error 1")
-                self.load_argument_array_memory_location_by_index(node, procedure_it)
+                if isinstance(node.index, ValueNode):
+                    self.add_instruction(f"SET {node.index.value}")
+                self.load_procedure_array_memory_location_by_index(node, procedure_it)
                 self.add_instruction(f"STORE 2") #index
                 self.add_instruction(f"LOAD {procedure_it.arguments[node.name]}")
                 self.add_instruction(f"ADD 2") #add index to offset
                 self.add_instruction(f"STORE {POINTER_HANDLING_ADDR}")
                 return POINTER_HANDLING_ADDR
-        else:
-            print(f"get_memory_error 2")
+            else:
+                return procedure_it.arguments[node.name]
+        elif node.name in procedure_it.declarations:
+            if node.name in procedure_it.declarations_array_info:
+                base_location, start_index, size, offset = procedure_it.declarations_array_info[node.name]
+                if isinstance(node.index, ValueNode):
+                    return offset + node.index.value
+                self.load_procedure_array_memory_location_by_index(node, procedure_it)
+                self.add_instruction(f"STORE 2") #index
+                self.add_instruction(f"LOAD {base_location + size}")
+                self.add_instruction(f"ADD 2") #add index to offset
+                self.add_instruction(f"STORE {POINTER_HANDLING_ADDR}")
+                return POINTER_HANDLING_ADDR
+            else:
+                return procedure_it.declarations[node.name]
 
     def get_array_memory_location_by_index_name(self, node):
         index_addr = self.get_memory_location(node.index)
@@ -962,9 +958,10 @@ class CodeGenerator:
         self.add_instruction(f"STORE {POINTER_HANDLING_ADDR}")
         return POINTER_HANDLING_ADDR
 
-    def load_argument_array_memory_location_by_index(self, node, procedure_it):
+    def load_procedure_array_memory_location_by_index(self, node, procedure_it):
         if isinstance(node.index, ValueNode):
-            self.add_instruction(f"SET {node.index.value}")
+            # Should be already handled
+            return
         elif node.index.name in procedure_it.arguments:
             self.add_instruction(f"LOADI {procedure_it.arguments[node.index.name]}")
         elif node.index.name in procedure_it.declarations:

@@ -31,6 +31,8 @@ test_cases = {
         {"input_file": "../tests/advanced_tests/example_adv_4.imp", "inputs": [], "expected_outputs": [9, 5, -9, -5, 4, -1, 1, -4, 1, -2, -2, 1, 0, 0, 0, 0, 0]},
         {"input_file": "../tests/advanced_tests/example_adv_5.imp", "inputs": [], "expected_outputs": [2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 10]},
         {"input_file": "../tests/advanced_tests/example_adv_6.imp", "inputs": [], "expected_outputs": [45, -45, -45, 45, 0, -2997, 115, 0, 1]},
+        {"input_file": "../tests/advanced_tests/example_adv_7.imp", "inputs": [], "expected_outputs": [104, 114, 124, 134, 144, 154, 164, 174, 184, 194, 204]},
+        {"input_file": "../tests/advanced_tests/example_adv_8.imp", "inputs": [], "expected_outputs": [104, 100, 124, 134, 144, 154, 164, 174, 184, 194, 204]},
     ],
 }
 

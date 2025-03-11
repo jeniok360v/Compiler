@@ -1,0 +1,23 @@
+PROCEDURE check(T s, k) IS
+  index, nums[10:20]
+BEGIN
+  FOR u FROM 10 TO 20 DO
+    nums[u] := u * k;
+  ENDFOR
+
+  FOR y FROM 0 TO 10 DO
+    index := 10 + y;
+    s[y] := nums[index] + 4;
+  ENDFOR
+
+END
+
+PROGRAM IS
+  rand[0:10], n
+BEGIN
+  n:=10;
+  check(rand,n);
+  FOR i FROM 0 TO 10 DO
+    WRITE rand[i];
+  ENDFOR
+END
